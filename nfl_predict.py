@@ -149,12 +149,8 @@ def generate_data(years, teams, weeks, season):
                 takeaways = interceptions + fumbles_recovered
                 giveaways = interceptions_lost + fumbles_lost
 
-                try:
-                    turnover_differential = takeaways/float(giveaways)
-                except ZeroDivisionError:
-                    turnover_differential = 0.0
-                profile['stats'].append(turnover_differential)
-
+                profile['stats'].append(takeaways - giveaways)
+                print 'Added %s' %(profile)
                 data.append(profile)
     return data
 
