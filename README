@@ -14,6 +14,8 @@ This project includes the following files:
   - data.json
   - nfl_predict_playoffs.py
   - nfl_predict_season.py
+  - Makefile
+  - Readme
 
 BEFORE RUNNING INSTRUCTIONS:
 There are several components you must install prior to running any of the scripts.
@@ -37,7 +39,11 @@ nfl_generate_data.py
 --------------------
 Generates data.json (already included) which is used by predict.py (our System 1 implementation)
 to make predictions. There isn't a requirement to run this file again as we included data.json. If you do run
-it it will re-generate data.json. Can be run
+it it will re-generate data.json. Can be run by:
+
+  $./nfl_generate_data.py
+
+The output will be the file data.json. As it is running it will output the teams it is generating.
 
 nfl_predict_playoffs.py
 -------------------------
