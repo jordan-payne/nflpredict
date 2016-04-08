@@ -4,24 +4,38 @@ import nfldb
 import json
 import math
 import json
+import sys
 
 db = nfldb.connect()
 
 def main():
 
+    year = raw_input('Enter a year to predict (2009-2014) or hit "enter" to predict all available years: ')
+
+    try:
+        year = int(year)
+        if year < 2009 or year > 2014:
+            print 'Not a selectable year, exiting...'
+            sys.exit()
+    except ValueError:
+        year = "all"
+
     teams = get_teams()
     season = 'Regular'
 
-    years = range(2009,2015)
+    if year == "all":
+        years = range(2009,2015)
+    else:
+        years = range(year, year+1)
     correct = 0
     for y in years:
         training_data = generate_data(y, teams, season)
         correct += predict(training_data, y, 3)
-    print correct/(len(years)*256.0)
+    print 'Accuracy: %s' %(correct/(len(years)*11.0))
 
 def predict(training_data, year, k):
     q = nfldb.Query(db)
-    q.game(season_year=year, season_type='Regular')
+    q.game(season_year=year, season_type='Postseason')
     games = q.as_games()
     correct = 0
     summation = 0
@@ -70,14 +84,19 @@ def predict(training_data, year, k):
             if game.home_team in similar_to_away and game.away_team in similar_to_home:
                 home_score += game.away_score/(similar_to_home[game.away_team] + 1 + similar_to_away[game.home_team])
                 away_score += game.home_score/(similar_to_home[game.away_team] + 1 + similar_to_away[game.home_team])
-        print home_score
-        print away_score
+        print '---------------'
+        print '%s: %s' %(g.home_team, home_score)
+        print '%s: %s' %(g.away_team, away_score)
         if home_score > away_score:
             winner = g.home_team
         elif home_score < away_score:
             winner = g.away_team
         if winner == g.winner:
             correct += 1
+            print 'CORRECT'
+        else:
+            print 'INCORRECT'
+        print '---------------'
 
     return correct
 
@@ -219,7 +238,7 @@ def generate_data(year, teams, season):
         giveaways = interceptions_lost + fumbles_lost
 
         try:
-            turnover_differential = takeaways/float(giveaways)
+            turnover_differential = takeaways - giveaways
         except ZeroDivisionError:
             turnover_differential = 0.0
         TURNOVER_DIFFERENTIAL[t] = turnover_differential

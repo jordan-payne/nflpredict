@@ -4,22 +4,40 @@ import nfldb
 import json
 import math
 import json
+import sys
 
 db = nfldb.connect()
 
 def main():
 
+    test_year = raw_input('Enter a year to predict (2009-2015): ')
+    training_year = raw_input('Enter a year for training, cannot be the same as prediction year (2009-2015): ')
+
+    try:
+        test_year = int(test_year)
+        training_year = int(training_year)
+    except ValueError:
+        print "Not an integer, exiting..."
+        sys.exit()
+
+    if test_year < 2009 or test_year > 2015 or training_year < 2009 or training_year > 2015:
+        print "Year out of range, exiting..."
+        sys.exit()
+
+    if test_year == training_year:
+        print "Cannot be the same year, exiting..."
+        sys.exit()
+
     teams = get_teams()
     season = 'Regular'
 
-    years = range(2009,2010)
-    weeks = range(3,18)
+    weeks = range(1,18)
     correct = 0
     results = []
-    training_data = generate_data(2010, teams, season)
+    training_data = generate_data(training_year, teams, season)
     for w in weeks:
-        test_data = generate_weekly_data(2009, teams, season, w)
-        result = predict(training_data, 2010, 3, test_data, 2009, w)
+        test_data = generate_weekly_data(test_year, teams, season, w)
+        result = predict(training_data, training_year, 3, test_data, test_year, w)
         results.append(result[0]/result[1])
     print sum(results)/len(results)
 
@@ -74,14 +92,21 @@ def predict(training_data, training_year, k, test_data, test_year, test_week):
             if game.home_team in similar_to_away and game.away_team in similar_to_home:
                 home_score += game.away_score/(similar_to_home[game.away_team] + 1 + similar_to_away[game.home_team])
                 away_score += game.home_score/(similar_to_home[game.away_team] + 1 + similar_to_away[game.home_team])
-        print home_score
-        print away_score
+        print '---------------'
+        print '%s: %s' %(g.home_team, home_score)
+        print '%s: %s' %(g.away_team, away_score)
         if home_score > away_score:
             winner = g.home_team
         elif home_score < away_score:
             winner = g.away_team
+        else:
+            winner = g.home_team
         if winner == g.winner:
             correct += 1
+            print 'CORRECT'
+        else:
+            print 'INCORRECT'
+        print '---------------'
 
     return [correct,summation]
 
@@ -114,7 +139,10 @@ def generate_weekly_data(year, teams, season, week):
         loses = 0
         for g in games:
             loses += 1
-        WP[t] = float(wins)/(loses + wins)
+        try:
+            WP[t] = float(wins)/(loses + wins)
+        except ZeroDivisionError:
+            WP[t] = 0.0
 
     OWP = {}
     for t in teams:
@@ -133,7 +161,10 @@ def generate_weekly_data(year, teams, season, week):
         summation = 0
         for o in opponents:
             summation += WP[o]
-        OWP[t] = summation/len(opponents)
+        try:
+            OWP[t] = summation/len(opponents)
+        except ZeroDivisionError:
+            OWP[t] = 0.0
 
     OOWP = {}
     for t in teams:
@@ -152,7 +183,10 @@ def generate_weekly_data(year, teams, season, week):
         summation = 0
         for o in opponents:
             summation += OWP[o]
-        OOWP[t] = summation/len(opponents)
+        try:
+            OOWP[t] = summation/len(opponents)
+        except ZeroDivisionError:
+            OOWP[t] = 0.0
 
     RPI = {}
     for t in teams:
@@ -175,7 +209,10 @@ def generate_weekly_data(year, teams, season, week):
             else:
                 points_for += g.home_score
                 points_against += g.away_score
-        PYTH_WINS[t] = pow(points_for, 2.37)/(pow(points_for, 2.37) + pow(points_against, 2.37))
+        try:
+            PYTH_WINS[t] = pow(points_for, 2.37)/(pow(points_for, 2.37) + pow(points_against, 2.37))
+        except ZeroDivisionError:
+            PYTH_WINS[t] = 0
 
     OFFENSIVE_STRATEGY = {}
     for t in teams:
@@ -224,7 +261,7 @@ def generate_weekly_data(year, teams, season, week):
         giveaways = interceptions_lost + fumbles_lost
 
         try:
-            turnover_differential = takeaways/float(giveaways)
+            turnover_differential = takeaways - float(giveaways)
         except ZeroDivisionError:
             turnover_differential = 0.0
         TURNOVER_DIFFERENTIAL[t] = turnover_differential
@@ -292,7 +329,10 @@ def generate_data(year, teams, season):
         summation = 0
         for o in opponents:
             summation += OWP[o]
-        OOWP[t] = summation/len(opponents)
+        try:
+            OOWP[t] = summation/len(opponents)
+        except ZeroDivisionError:
+            OOWP[t] = 0.0
 
     RPI = {}
     for t in teams:
@@ -315,7 +355,10 @@ def generate_data(year, teams, season):
             else:
                 points_for += g.home_score
                 points_against += g.away_score
-        PYTH_WINS[t] = pow(points_for, 2.37)/(pow(points_for, 2.37) + pow(points_against, 2.37))
+        try:
+            PYTH_WINS[t] = pow(points_for, 2.37)/(pow(points_for, 2.37) + pow(points_against, 2.37))
+        except ZeroDivisionError:
+            PYTH_WINS[t] = 0.0
 
     OFFENSIVE_STRATEGY = {}
     for t in teams:
@@ -363,11 +406,7 @@ def generate_data(year, teams, season):
         takeaways = interceptions + fumbles_recovered
         giveaways = interceptions_lost + fumbles_lost
 
-        try:
-            turnover_differential = takeaways/float(giveaways)
-        except ZeroDivisionError:
-            turnover_differential = 0.0
-        TURNOVER_DIFFERENTIAL[t] = turnover_differential
+        TURNOVER_DIFFERENTIAL[t] = takeaways - giveaways
 
     RPI = normalize(RPI, 150, 0)
     PYTH_WINS = normalize(PYTH_WINS, 0, 100)
@@ -384,7 +423,10 @@ def normalize(values, new_max, new_min):
     old_range = max_value - min_value
     new_range = new_max - new_min
     for k,v in values.iteritems():
-        values[k] = (((v - min_value) * new_range) / old_range) + new_min
+        try:
+            values[k] = (((v - min_value) * new_range) / old_range) + new_min
+        except ZeroDivisionError:
+            values[k] = 0.0
     return values
 
 if __name__ == "__main__":
