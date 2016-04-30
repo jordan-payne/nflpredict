@@ -1,3 +1,6 @@
 # ANALYSIS MODULE FOR NFL PREDICT
 
-print 'TEST IMPORT'
+import nfldb
+
+def get_team(team_name):
+    return 'ARZ'
