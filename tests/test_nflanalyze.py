@@ -1,4 +1,5 @@
 from context import nflanalyze
+import json
 
 def test_get_team():
     team = nflanalyze.get_team('ARI')
@@ -29,3 +30,11 @@ def test_get_player_all_time_stats():
     assert stats.passing_att == 4059
     assert stats.rushing_att == 131
     assert stats.passing_yds == 30956
+
+def test_to_json():
+    first_name = 'Peyton'
+    last_name = 'Manning'
+    team = 'DEN'
+    stats = nflanalyze.get_player_all_time_stats(last_name, first_name, team)
+    dictionary = json.loads(nflanalyze.to_json(stats))
+    assert dictionary['passing_att'] == 4059
