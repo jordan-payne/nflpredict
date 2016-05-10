@@ -1,19 +1,30 @@
 <!doctype html>
 <html ng-app='nflpredict'>
   <head>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+      <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.min.css">
+      <link rel="stylesheet" type="text/css" href="main.css">
       <script src='angular.js'></script>
+      <script src='https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.min.js'></script>
+      <script src='router.min.js'></script>
       <script src='app.js'></script>
   </head>
   <body>
     <div ng-controller='IndexController as index'>
         <strong>NFL Predict</strong>
-        <form ng-submit='index.getPlayer(player)'>
-          <input type="text" ng-model='player.first_name' placeholder='First Name'/>
-          <input type="text" ng-model='player.last_name' placeholder='Last Name'/>
-          <input type="text" ng-model='player.team' placeholder='Team'/>
-          <input type='submit' value='Get Player'/>
+        <form ng-submit='index.getTeamRoster(team)'>
+          <input type="text" ng-model='team.team' placeholder='Team'/>
+          <input type='submit' value='Get Team Roster'/>
         </form>
-        {{index.result}}
+        <div ui-grid="index.gridOptions" class="grid" ui-grid-pinning ui-grid-resize-columns ui-grid-auto-resize></div>
+    </div>
+    <div>
+      <form ng-submit='index.getPlayer(player)'>
+        <input type="text" ng-model='player.first_name' placeholder='First Name'/>
+        <input type="text" ng-model='player.last_name' placeholder='Last Name'/>
+        <input type="text" ng-model='player.team' placeholder='Team'/>
+        <input type='submit' value='Get Player'/>
+      </form>
     </div>
   </body>
 </html>

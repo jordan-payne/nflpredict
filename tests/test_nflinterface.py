@@ -20,13 +20,21 @@ def test_home(client):
     assert b'NFL Predict' in response.data
 
 def test_get_player(client):
-    response = client.post('/get_player', data=dict(
-        last_name='Brees',
-        first_name='Drew',
-        team='NO'
-    ))
-    print response.data
+    payload = {
+        'last_name':'Brees',
+        'first_name':'Drew',
+        'team':'NO'}
+    response = client.post('/get_player', data=json.dumps(payload))
     json_data = json.loads(response.data)
     assert json_data['position'] == 'QB'
     assert json_data['status'] == 'Active'
     assert json_data['full_name'] == 'Drew Brees'
+
+def test_get_team_roster(client):
+    payload = {
+        'team': 'NO'
+    }
+    response = client.post('/get_team_roster', data=json.dumps(payload))
+    roster = json.loads(response.data)
+    assert roster[0]['team'] == 'NO'
+    assert roster[0]['status'] == 'Active'

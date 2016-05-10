@@ -14,9 +14,9 @@ def test_get_all_teams():
     assert len(nflanalyze.get_all_teams()) == 33
 
 def test_get_player():
-    first_name = 'Drew'
-    last_name = 'Brees'
-    team = 'NO'
+    first_name = 'Peyton'
+    last_name = 'Manning'
+    team = 'UNK'
     player = nflanalyze.get_player(last_name, first_name, team)
     assert player['first_name'] == first_name
     assert player['last_name'] == last_name
@@ -25,16 +25,14 @@ def test_get_player():
 def test_get_player_all_time_stats():
     first_name = 'Peyton'
     last_name = 'Manning'
-    team = 'DEN'
+    team = 'UNK'
     stats = nflanalyze.get_player_all_time_stats(last_name, first_name, team)
-    assert stats.passing_att == 4059
+    assert stats.passing_att == 4082
     assert stats.rushing_att == 131
-    assert stats.passing_yds == 30956
+    assert stats.passing_yds == 31097
 
-def test_to_json():
-    first_name = 'Peyton'
-    last_name = 'Manning'
-    team = 'DEN'
-    stats = nflanalyze.get_player_all_time_stats(last_name, first_name, team)
-    dictionary = json.loads(nflanalyze.to_json(stats))
-    assert dictionary['passing_att'] == 4059
+def test_get_team_roster():
+    team = 'NO'
+    players = nflanalyze.get_team_roster(team)
+    assert players[0].team == 'NO'
+    assert str(players[0].status) == 'Active'

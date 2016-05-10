@@ -1,3 +1,4 @@
 nfldb
 pytest
 flask
+selenium
