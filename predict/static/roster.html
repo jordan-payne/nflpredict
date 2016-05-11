@@ -1,0 +1,9 @@
+<!-- partials/roster.html -->
+<div>
+    <a ui-sref='home'>Home</a>
+    <form ng-submit='index.getTeamRoster(team)'>
+      <input type="text" ng-model='team.team' placeholder='Team'/>
+      <input type='submit' value='Get Team Roster'/>
+    </form>
+    <div ui-grid="index.gridOptions" class="grid" ui-grid-pinning ui-grid-resize-columns ui-grid-auto-resize></div>
+</div>

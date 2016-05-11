@@ -1,6 +1,22 @@
 angular.module('nflpredict', ['ui.router', 'ui.grid', 'ui.grid.pinning', 'ui.grid.resizeColumns', 'ui.grid.autoResize'])
-  .config(function ($stateProvider) {
-    
+  .config(function ($stateProvider, $urlRouterProvider) {
+    $urlRouterProvider.otherwise('/')
+
+    $stateProvider
+      .state('home', {
+        url: '/',
+        templateUrl: 'index.html'
+      })
+      .state('roster', {
+        url: '/roster',
+        templateUrl: 'roster.html',
+        controller: 'IndexController as index'
+      })
+      .state('player_stats', {
+        url: '/player_stats',
+        templateUrl: 'player_stats.html'
+      });
+
   })
   .controller('IndexController', function($http) {
     var index = this;
