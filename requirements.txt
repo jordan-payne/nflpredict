@@ -2,3 +2,4 @@ nfldb
 pytest
 flask
 selenium
+pdfquery

@@ -1,1 +1,1 @@
-__all__ = ['nflanalyze', 'nfldbc', 'nflinterface', 'nflcollect']
+__all__ = ['nflanalyze', 'nfldbc', 'nflinterface', 'nflcollect', 'nflscrape']
