@@ -8,7 +8,7 @@ from lxml import etree
 
 class pdfWrapper:
 
-    __tmpDir = 'tmp'
+    __tmpDir = '/tmp/'
 
     def __findPlaytimePercentage(self, pdf):
         pdf.load(self.numPages - 1) # index of last page
