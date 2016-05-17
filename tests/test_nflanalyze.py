@@ -13,6 +13,11 @@ def test_get_stats_categories():
 def test_get_all_teams():
     assert len(nflanalyze.get_all_teams()) == 33
 
+def test_fuzzy_search():
+    (player, dist) = nflanalyze.fuzzy_search('eli manni')
+    assert player.first_name == 'Eli'
+    assert player.last_name == 'Manning'
+
 def test_get_player():
     first_name = 'Peyton'
     last_name = 'Manning'

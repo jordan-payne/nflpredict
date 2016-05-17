@@ -18,6 +18,9 @@ def get_all_teams():
 def get_stats_categories():
     return nfldb.stat_categories
 
+def fuzzy_search(name, limit=1, team=None, position=None):
+    return nfldb.player_search(dbc, name, limit=limit, team=team, position=position)
+
 def get_player(last_name, first_name, team):
     with nfldb.Tx(dbc) as cursor:
         cursor.execute(
