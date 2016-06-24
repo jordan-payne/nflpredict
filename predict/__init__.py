@@ -1,1 +1,1 @@
-__all__ = ['nfldbc']
+__all__ = ['nfldbc', 'nflelo', 'generate', 'predict']
